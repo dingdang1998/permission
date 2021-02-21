@@ -6,13 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author labi
@@ -24,7 +17,7 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @TableName("usr")
-public class User implements UserDetails {
+public class User {
 
     public static final int ENABLE = 0;
     public static final int DISABLE = 1;
@@ -54,67 +47,4 @@ public class User implements UserDetails {
      */
     @TableField(value = "password")
     private String password;
-
-    /**
-     * 用户具有的角色
-     */
-    private List<Role> roles;
-
-
-    /**
-     * 用户所具有的角色
-     *
-     * @return
-     */
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>(roles.size());
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
-        return authorities;
-    }
-
-    /**
-     * 账户是否过期
-     *
-     * @return
-     */
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    /**
-     * 账户是否锁定
-     *
-     * @return
-     */
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    /**
-     * 密码是否过期
-     *
-     * @return
-     */
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    /**
-     * 用户是否被禁用
-     *
-     * @return
-     */
-    @Override
-    public boolean isEnabled() {
-        if (enabled == 1) {
-            return true;
-        }
-        return false;
-    }
 }

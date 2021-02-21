@@ -2,6 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.labi.permissionsystem.dao.UserDao">
     <select id="getRolesByUserId" resultType="org.labi.permissionsystem.bean.Role">
-    select r.* from role r,hr_role hrr where hrr.rid = r.id and r.id=#{userId}
+        select r.* from role r,usr_role urr where urr.rid=r.id and urr.usrid=#{userId}
     </select>
 </mapper>

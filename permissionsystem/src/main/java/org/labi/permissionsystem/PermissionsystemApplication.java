@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @MapperScan("org.labi.permissionsystem.dao")
 @ComponentScan("org.labi.permissionsystem.dao")
+@ComponentScan("org.labi.permissionsystem")
 public class PermissionsystemApplication {
 
     public static void main(String[] args) {
