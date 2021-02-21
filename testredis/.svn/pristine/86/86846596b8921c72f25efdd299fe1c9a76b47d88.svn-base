@@ -1,0 +1,26 @@
+#redis����
+spring.redis.database=0
+spring.redis.host=192.168.0.232
+spring.redis.port=6379
+spring.redis.lettuce.pool.max-active=8
+spring.redis.lettuce.pool.max-idle=8
+spring.redis.lettuce.pool.max-wait=-1ms
+spring.redis.jedis.pool.max-idle=0
+
+
+#ȡֵ��key
+my.getValueKey=err_sensor
+#��ֵ��key
+my.putValueKey=test1
+#ѡ���ĸ�ʵ�壺1--���ػ� 2--ж������ 3--���� 4--��© 5--���� 6--����̨Ӧ�� 7--PD-�������� 8--������¼ 9--�޴� 10--������
+my.entityNum=10
+
+#��ʼ��id
+my.start=0
+#������id
+my.end=+
+#ȡֵ����
+my.dataCount=100
+
+
+
