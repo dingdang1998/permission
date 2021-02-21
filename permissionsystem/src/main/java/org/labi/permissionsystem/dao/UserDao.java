@@ -1,8 +1,12 @@
 package org.labi.permissionsystem.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import org.labi.permissionsystem.bean.Role;
 import org.labi.permissionsystem.bean.User;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author labi
@@ -13,4 +17,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserDao extends BaseMapper<User> {
+    /**
+     * 查询用户所具有的角色
+     * @param userId
+     * @return
+     */
+    List<Role> getRolesByUserId(@Param("userId") int userId);
 }

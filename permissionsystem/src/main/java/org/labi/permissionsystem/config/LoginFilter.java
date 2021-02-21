@@ -18,7 +18,7 @@ import java.util.Map;
  * @author labi
  * @version 1.0.0
  * @ClassName LoginFilter.java
- * @Description 自定义过滤器
+ * @Description 自定义过滤器（这样就可以接收JSON格式的数据，而不是key/value格式的数据）
  * @createTime 2021年01月25日 18:27:00
  */
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {

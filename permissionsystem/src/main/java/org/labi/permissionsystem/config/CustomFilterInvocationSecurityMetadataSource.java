@@ -18,7 +18,7 @@ import java.util.List;
  * @author labi
  * @version 1.0.0
  * @ClassName CustomFilterInvocationSecurityMetadataSource.java
- * @Description 根据用户传来的地址, 分析出请求需要的角色
+ * @Description 根据用户传来的地址, 分析出该地址需要的角色
  * @createTime 2021年01月27日 19:43:00
  */
 @Component
@@ -45,6 +45,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
             String[] str = roles.toArray(new String[roles.size()]);
             return SecurityConfig.createList(str);
         }
+        //没有匹配上的资源都是登陆访问
         return SecurityConfig.createList("ROLE_login");
     }
 

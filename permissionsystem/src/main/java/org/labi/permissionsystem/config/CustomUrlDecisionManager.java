@@ -21,6 +21,17 @@ import java.util.Collection;
 @Component
 public class CustomUrlDecisionManager implements AccessDecisionManager {
 
+    /**
+     * 这里涉及到一个all和any的问题：假设当前用户具备角色A、角色B，
+     * 当前请求需要角色B、角色C，那么是要当前用户要包含所有请求角色才算授权成功还是只要包含一个就算授权成功？
+     * 这里采用了第二种方案，即只要包含一个即可
+     *
+     * @param authentication 当前登录用户所具有的角色信息
+     * @param o
+     * @param collection     当前请求需要的角色
+     * @throws AccessDeniedException
+     * @throws InsufficientAuthenticationException
+     */
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
         for (ConfigAttribute configAttribute : collection) {
@@ -34,7 +45,7 @@ public class CustomUrlDecisionManager implements AccessDecisionManager {
                 return;
             }
 
-            //获取所具有的权限
+            //当前登录用户所具有的权限
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             for (GrantedAuthority grantedAuthority : authorities) {
                 if (grantedAuthority.getAuthority().equals(needRole)) {

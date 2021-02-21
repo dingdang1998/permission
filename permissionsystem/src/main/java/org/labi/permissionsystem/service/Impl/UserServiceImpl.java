@@ -1,13 +1,18 @@
 package org.labi.permissionsystem.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.labi.permissionsystem.bean.Role;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.dao.UserDao;
 import org.labi.permissionsystem.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author labi
@@ -18,6 +23,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserService, UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public void add() {
@@ -31,7 +39,16 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        
-        return null;
+        //查找该用户名是否存在
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(User::getName, username);
+        User user = getOne(lambdaQueryWrapper);
+        if (user == null) {
+            throw new UsernameNotFoundException("该用户不存在");
+        }
+        //匹配该用户的角色
+        List<Role> roles = userDao.getRolesByUserId(user.getId());
+        user.setRoles(roles);
+        return user;
     }
 }

@@ -2,6 +2,7 @@ package org.labi.permissionsystem.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.labi.permissionsystem.bean.User;
+import org.labi.permissionsystem.service.Impl.UserServiceImpl;
 import org.labi.permissionsystem.utils.CharacterBean;
 import org.labi.permissionsystem.utils.RespBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,8 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
     private CustomUrlDecisionManager customUrlDecisionManager;
     @Autowired
     private CustomFilterInvocationSecurityMetadataSource customFilterInvocationSecurityMetadataSource;
+    @Autowired
+    private UserServiceImpl userServiceImpl;
 
     @Bean
     SessionRegistryImpl sessionRegistry() {
@@ -71,7 +74,7 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
+        auth.userDetailsService(userServiceImpl);
     }
 
     /**
