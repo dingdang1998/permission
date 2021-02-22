@@ -13,7 +13,7 @@ import java.util.List;
  * @author labi
  * @version 1.0.0
  * @ClassName UserRoles.java
- * @Description
+ * @Description 用户具有的角色
  * @createTime 2021年02月21日 21:41:00
  */
 @Data

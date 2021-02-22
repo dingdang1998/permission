@@ -6,11 +6,13 @@ import org.labi.permissionsystem.bean.Role;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.bean.UserRoles;
 import org.labi.permissionsystem.dao.UserDao;
+import org.labi.permissionsystem.service.RoleService;
 import org.labi.permissionsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,14 +30,26 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private RoleService roleService;
+
     @Override
-    public void add() {
-        User user = new User();
-        user.setName("赵一一");
-        user.setUsername("zhaoyiyi");
-        user.setPassword("zhaoyiyi");
+    public void addUser(User user) {
+        //将密码进行加密处理
+        user.setPassword(passwordEncryption(user.getPassword()));
+        //新注册用户默认为启用
         user.setEnabled(User.ENABLE);
         save(user);
+        //添加用户--角色关系,注册的用户初始角色都为（7--普通用户）
+        roleService.addUserRole(user.getId(), 7);
+    }
+
+    @Override
+    public boolean checkUsername(String username) {
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(User::getUsername, username);
+        User user = getOne(lambdaQueryWrapper);
+        return user != null;
     }
 
     @Override
@@ -45,16 +59,28 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         lambdaQueryWrapper.eq(User::getUsername, username);
         User user = getOne(lambdaQueryWrapper);
         if (user == null) {
-            throw new UsernameNotFoundException("该用户不存在");
+            throw new UsernameNotFoundException("用户名不存在，请检查用户名或注册");
         }
         //匹配该用户的角色
         List<Role> roles = userDao.getRolesByUserId(user.getId());
         //封装成UserRoles
         UserRoles userRoles = new UserRoles();
+        userRoles.setId(user.getId());
+        userRoles.setName(user.getName());
         userRoles.setEnabled(user.getEnabled());
         userRoles.setRoles(roles);
         userRoles.setUsername(user.getUsername());
         userRoles.setPassword(user.getPassword());
         return userRoles;
+    }
+
+    /**
+     * 对密码进行加密处理
+     *
+     * @param password
+     */
+    private String passwordEncryption(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(password);
     }
 }

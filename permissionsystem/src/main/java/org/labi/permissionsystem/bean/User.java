@@ -19,8 +19,14 @@ import lombok.experimental.Accessors;
 @TableName("usr")
 public class User {
 
-    public static final int ENABLE = 0;
-    public static final int DISABLE = 1;
+    /**
+     * 启用
+     */
+    public static final int ENABLE = 1;
+    /**
+     * 禁用
+     */
+    public static final int DISABLE = 0;
 
     /**
      * 用户表主键id

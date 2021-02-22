@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
@@ -57,7 +59,7 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 设置密码加密
+     * 设置密码是否加密
      *
      * @return
      */
@@ -74,7 +76,7 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userServiceImpl);
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     /**
@@ -89,6 +91,16 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        //将用户名不存在和密码错误分开
+        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
+        daoAuthenticationProvider.setUserDetailsService(userServiceImpl);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return daoAuthenticationProvider;
+    }
+
+    @Bean
     LoginFilter loginFilter() throws Exception {
         LoginFilter loginFilter = new LoginFilter();
         //设置身份验证成功处理程序
@@ -98,7 +110,8 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
             PrintWriter out = httpServletResponse.getWriter();
             //获取登陆成功的用户
             User user = (User) authentication.getPrincipal();
-            user.setPassword(null);
+            //将密码隐藏
+            user.setPassword("");
             RespBean success = new RespBean(CharacterBean.TWO_HUNDRED, CharacterBean.success, user);
             out.write(new ObjectMapper().writeValueAsString(success));
             out.flush();
@@ -118,7 +131,9 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
             } else if (e instanceof DisabledException) {
                 errorMsg = "账户被禁用，请联系管理员";
             } else if (e instanceof BadCredentialsException) {
-                errorMsg = "用户名或密码输入错误，请重新输入";
+                errorMsg = "密码输入错误，请重新输入";
+            } else if (e instanceof UsernameNotFoundException) {
+                errorMsg = e.getMessage();
             }
             RespBean error = new RespBean(CharacterBean.FIVE_HUNDRED, errorMsg, null);
             out.write(new ObjectMapper().writeValueAsString(error));

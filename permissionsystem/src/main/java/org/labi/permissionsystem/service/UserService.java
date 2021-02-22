@@ -2,7 +2,6 @@ package org.labi.permissionsystem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.labi.permissionsystem.bean.User;
-import org.springframework.stereotype.Service;
 
 /**
  * @author labi
@@ -14,6 +13,16 @@ import org.springframework.stereotype.Service;
 public interface UserService extends IService<User> {
     /**
      * 添加用户
+     *
+     * @param user
      */
-    void add();
+    void addUser(User user);
+
+    /**
+     * 检查用户名是否存在
+     *
+     * @param username
+     * @return
+     */
+    boolean checkUsername(String username);
 }

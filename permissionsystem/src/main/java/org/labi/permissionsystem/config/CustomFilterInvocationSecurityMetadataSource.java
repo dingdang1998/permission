@@ -1,7 +1,8 @@
 package org.labi.permissionsystem.config;
 
-import org.labi.permissionsystem.bean.MenuRoleDTO;
-import org.labi.permissionsystem.service.MenuRoleDtoService;
+import org.labi.permissionsystem.bean.Menu;
+import org.labi.permissionsystem.bean.Role;
+import org.labi.permissionsystem.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
@@ -10,7 +11,6 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,30 +23,50 @@ import java.util.List;
  */
 @Component
 public class CustomFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
+
     @Autowired
-    private MenuRoleDtoService menuRoleDtoService;
+    private MenuService menuService;
+
     /**
-     * 蚂蚁路径匹配器
+     * 注册用户的路径
+     */
+    private static final String addUser = "/user/addUser*";
+
+    /**
+     * 检查用户名路径
+     */
+    private static final String checkUsername = "/user/checkUsername*";
+
+    /**
+     * 路径匹配器
      */
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
-        //记录该请求路径所需要的角色
-        List<String> roles = new ArrayList<>();
         //获取请求路径
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
-        //获取所有路径
-        List<MenuRoleDTO> allMenusWithRole = menuRoleDtoService.getAllMenusWithRole();
-        for (MenuRoleDTO menuRoleDTO : allMenusWithRole) {
-            if (antPathMatcher.match(menuRoleDTO.getUrl(), requestUrl)) {
-                roles.add(menuRoleDTO.getRname());
+
+        if (antPathMatcher.match(addUser, requestUrl) || antPathMatcher.match(checkUsername, requestUrl)) {
+            //放开一些不需要验证的路径
+            return SecurityConfig.createList("ROLE_permit");
+        } else {
+            //获取所有路径及其所匹配的角色
+            List<Menu> allMenusWithRole = menuService.getAllMenusWithRole();
+            for (Menu menu : allMenusWithRole) {
+                if (antPathMatcher.match(menu.getUrl(), requestUrl)) {
+                    List<Role> roles = menu.getRoles();
+                    String[] roleNames = new String[roles.size()];
+                    for (int i = 0; i < roles.size(); i++) {
+                        roleNames[i] = roles.get(i).getName();
+                    }
+                    return SecurityConfig.createList(roleNames);
+                }
             }
-            String[] str = roles.toArray(new String[roles.size()]);
-            return SecurityConfig.createList(str);
+            //匹配不到的路径
+            return SecurityConfig.createList("ROLE_login");
         }
-        //没有匹配上的资源都是登陆访问
-        return SecurityConfig.createList("ROLE_login");
+
     }
 
     @Override
