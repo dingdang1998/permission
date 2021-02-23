@@ -1,4 +1,4 @@
-package org.labi.permissionsystem.config;
+package org.labi.permissionsystem.config.springSecurity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;

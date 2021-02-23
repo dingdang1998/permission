@@ -1,4 +1,4 @@
-package org.labi.permissionsystem.config;
+package org.labi.permissionsystem.config.springSecurity;
 
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;

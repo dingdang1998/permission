@@ -29,9 +29,18 @@ public interface UserService extends IService<User> {
 
     /**
      * 分页查询用户
-     * @return
+     *
      * @param page
      * @param size
+     * @param name
+     * @return
      */
-    IPage<User> getUsersToPage(int page,int size,String name);
+    IPage<User> getUsersToPage(int page, int size, String name);
+
+    /**
+     * 修改用户状态
+     * @param id
+     * @param status
+     */
+    void updateUserStatus(int id,int status);
 }

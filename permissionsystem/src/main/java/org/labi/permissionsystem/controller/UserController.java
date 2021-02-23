@@ -61,4 +61,18 @@ public class UserController {
         respPageBean.setData(usersToPage.getRecords());
         return respPageBean;
     }
+
+    /**
+     * 修改用户状态
+     *
+     * @param id     用户表主键id
+     * @param status 用户状态
+     * @return
+     */
+    @PutMapping("/updateUserStatus/{id}/{status}")
+    public RespBean updateUserStatus(@PathVariable int id,
+                                     @PathVariable int status) {
+        userService.updateUserStatus(id, status);
+        return RespBean.ok(CharacterBean.success);
+    }
 }

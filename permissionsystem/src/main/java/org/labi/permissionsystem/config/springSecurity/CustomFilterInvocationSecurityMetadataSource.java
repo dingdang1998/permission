@@ -1,4 +1,4 @@
-package org.labi.permissionsystem.config;
+package org.labi.permissionsystem.config.springSecurity;
 
 import org.labi.permissionsystem.bean.Menu;
 import org.labi.permissionsystem.bean.Role;

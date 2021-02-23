@@ -74,6 +74,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     }
 
     @Override
+    public void updateUserStatus(int id, int status) {
+        User user = new User();
+        user.setId(id);
+        user.setEnabled(status);
+        updateById(user);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //查找该用户名是否存在
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
