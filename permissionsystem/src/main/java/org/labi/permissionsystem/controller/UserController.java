@@ -1,5 +1,7 @@
 package org.labi.permissionsystem.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.labi.permissionsystem.bean.RespPageBean;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.service.UserService;
 import org.labi.permissionsystem.utils.CharacterBean;
@@ -40,5 +42,23 @@ public class UserController {
     @GetMapping("/checkUsername")
     public boolean checkUsername(@RequestParam(value = "username") String username) {
         return userService.checkUsername(username);
+    }
+
+    /**
+     * 用户信息分页展示
+     *
+     * @return
+     */
+    @GetMapping("/getUsersToPage")
+    public RespPageBean getUsersToPage(@RequestParam(value = "page", defaultValue = "1") int page,
+                                       @RequestParam(value = "size", defaultValue = "10") int size,
+                                       @RequestParam(value = "name", required = false) String name) {
+        //分页查询
+        IPage<User> usersToPage = userService.getUsersToPage(page, size, name);
+        //封装成RespPageBean返回
+        RespPageBean respPageBean = new RespPageBean();
+        respPageBean.setTotal(usersToPage.getTotal());
+        respPageBean.setData(usersToPage.getRecords());
+        return respPageBean;
     }
 }

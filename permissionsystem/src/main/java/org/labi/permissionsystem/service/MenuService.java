@@ -16,4 +16,10 @@ public interface MenuService {
      * @return
      */
     List<Menu> getAllMenusWithRole();
+
+    /**
+     * 根据用户id加载该用户的权限下所应该加载的路径
+     * @return
+     */
+    List<Menu> getMenusByUserId();
 }

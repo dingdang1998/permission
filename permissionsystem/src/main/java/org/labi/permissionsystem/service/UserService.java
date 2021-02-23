@@ -1,5 +1,6 @@
 package org.labi.permissionsystem.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.labi.permissionsystem.bean.User;
 
@@ -25,4 +26,12 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean checkUsername(String username);
+
+    /**
+     * 分页查询用户
+     * @return
+     * @param page
+     * @param size
+     */
+    IPage<User> getUsersToPage(int page,int size,String name);
 }
