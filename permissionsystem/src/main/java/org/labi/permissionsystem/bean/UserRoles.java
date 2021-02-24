@@ -1,6 +1,7 @@
 package org.labi.permissionsystem.bean;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.util.List;
  * @createTime 2021年02月21日 21:41:00
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class UserRoles extends User implements UserDetails {
     /**
      * 用户具有的角色
@@ -75,9 +77,7 @@ public class UserRoles extends User implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        if (getEnabled() == 1) {
-            return true;
-        }
-        return false;
+        return getEnabled() == 1;
     }
 }
+

@@ -4,7 +4,6 @@ import org.labi.permissionsystem.bean.Menu;
 import org.labi.permissionsystem.bean.UserRoles;
 import org.labi.permissionsystem.dao.MenuDao;
 import org.labi.permissionsystem.service.MenuService;
-import org.omg.IOP.ServiceContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,5 +32,10 @@ public class MenuServiceImpl implements MenuService {
         //获取当前登陆用户id
         Integer id = ((UserRoles) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getId();
         return menuDao.getMenusByUserId(id);
+    }
+
+    @Override
+    public List<Integer> getMenuIdsByRid(Integer rid) {
+        return getMenuIdsByRid(rid);
     }
 }

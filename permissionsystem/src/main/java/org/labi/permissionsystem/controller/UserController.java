@@ -3,6 +3,7 @@ package org.labi.permissionsystem.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.labi.permissionsystem.bean.RespPageBean;
 import org.labi.permissionsystem.bean.User;
+import org.labi.permissionsystem.bean.UserRoles;
 import org.labi.permissionsystem.service.UserService;
 import org.labi.permissionsystem.utils.CharacterBean;
 import org.labi.permissionsystem.utils.RespBean;
@@ -23,7 +24,7 @@ public class UserController {
     private UserService userService;
 
     /**
-     * 添加用户
+     * 用户注册
      *
      * @param user
      * @return
@@ -73,6 +74,42 @@ public class UserController {
     public RespBean updateUserStatus(@PathVariable int id,
                                      @PathVariable int status) {
         userService.updateUserStatus(id, status);
+        return RespBean.ok(CharacterBean.success);
+    }
+
+    /**
+     * admin添加用户
+     *
+     * @param userRoles
+     * @return
+     */
+    @PostMapping("/adminAdd")
+    public RespBean addUserByAdmin(@RequestBody UserRoles userRoles) {
+        userService.addUserByAdmin(userRoles);
+        return RespBean.ok(CharacterBean.success);
+    }
+
+    /**
+     * admin编辑用户信息
+     *
+     * @param userRoles
+     * @return
+     */
+    @PutMapping("/compile")
+    public RespBean updateUserByAdmin(@RequestBody UserRoles userRoles) {
+        userService.updateUserByAdmin(userRoles);
+        return RespBean.ok(CharacterBean.success);
+    }
+
+    /**
+     * admin删除用户
+     *
+     * @param userId
+     * @return
+     */
+    @DeleteMapping("/delete/{userId}")
+    public RespBean deleteUserByAdmin(@PathVariable int userId) {
+        userService.deleteUserByAdmin(userId);
         return RespBean.ok(CharacterBean.success);
     }
 }

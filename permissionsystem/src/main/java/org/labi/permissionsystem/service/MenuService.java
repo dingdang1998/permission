@@ -13,13 +13,23 @@ import java.util.List;
 public interface MenuService {
     /**
      * 获取所有路径及其所对应的角色
+     *
      * @return
      */
     List<Menu> getAllMenusWithRole();
 
     /**
-     * 根据用户id加载该用户的权限下所应该加载的路径
+     * 根据用户id加载该用户的角色下所应该加载的路径
+     *
      * @return
      */
     List<Menu> getMenusByUserId();
+
+    /**
+     * 根据角色id获取该角色所对应的菜单
+     *
+     * @param rid
+     * @return
+     */
+    List<Integer> getMenuIdsByRid(Integer rid);
 }

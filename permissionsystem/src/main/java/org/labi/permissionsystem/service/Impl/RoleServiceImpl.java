@@ -1,9 +1,12 @@
 package org.labi.permissionsystem.service.Impl;
 
+import org.labi.permissionsystem.bean.Role;
 import org.labi.permissionsystem.dao.RoleDao;
 import org.labi.permissionsystem.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @program: permissionsystem
@@ -18,7 +21,22 @@ public class RoleServiceImpl implements RoleService {
     private RoleDao roleDao;
 
     @Override
-    public void addUserRole(int userId, int roleId) {
-        roleDao.addUserRole(userId, roleId);
+    public void addUserRole(int userId, Integer[] roleIds) {
+        roleDao.addUserRole(userId, roleIds);
+    }
+
+    @Override
+    public void deleteUserRoleByUserId(int userId) {
+        roleDao.deleteUserRoleByUserId(userId);
+    }
+
+    @Override
+    public List<Role> getAllRoles() {
+        return roleDao.getAllRoles();
+    }
+
+    @Override
+    public void addRole(Role role) {
+        roleDao.addRole(role);
     }
 }

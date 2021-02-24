@@ -1,16 +1,41 @@
 package org.labi.permissionsystem.service;
 
+import org.labi.permissionsystem.bean.Role;
+
+import java.util.List;
+
 /**
- * 权限Service
+ * 角色Service
  *
  * @author dzp
  */
 public interface RoleService {
     /**
-     * 添加用户--权限关系
+     * 添加用户--角色关系
      *
      * @param userId
-     * @param roleId
+     * @param roleIds
      */
-    void addUserRole(int userId, int roleId);
+    void addUserRole(int userId, Integer[] roleIds);
+
+    /**
+     * 删除用户--角色关系
+     *
+     * @param userId
+     */
+    void deleteUserRoleByUserId(int userId);
+
+    /**
+     * 获取所有角色
+     *
+     * @return
+     */
+    List<Role> getAllRoles();
+
+    /**
+     * 添加角色
+     *
+     * @param role
+     */
+    void addRole(Role role);
 }

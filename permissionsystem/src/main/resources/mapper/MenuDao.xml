@@ -77,4 +77,7 @@
             m1.`id` = m2.`parentId`
             AND urr.`usrid` = #{userId} and urr.`rid`=mr.`rid` and mr.`mid`=m2.`id` and m2.`enabled`=true order by m1.`id`,m2.`id`
     </select>
+    <select id="getMenuIdsByRid" resultType="java.lang.Integer">
+        select mid from menu_role where rid=#{rid}
+    </select>
 </mapper>

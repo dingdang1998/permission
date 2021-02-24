@@ -3,6 +3,7 @@ package org.labi.permissionsystem.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.labi.permissionsystem.bean.User;
+import org.labi.permissionsystem.bean.UserRoles;
 
 /**
  * @author labi
@@ -39,8 +40,28 @@ public interface UserService extends IService<User> {
 
     /**
      * 修改用户状态
+     *
      * @param id
      * @param status
      */
-    void updateUserStatus(int id,int status);
+    void updateUserStatus(int id, int status);
+
+    /**
+     * admin添加用户
+     *
+     * @param userRoles
+     */
+    void addUserByAdmin(UserRoles userRoles);
+
+    /**
+     * admin编辑用户信息
+     * @param userRoles
+     */
+    void updateUserByAdmin(UserRoles userRoles);
+
+    /**
+     * admin删除用户
+     * @param userId
+     */
+    void deleteUserByAdmin(int userId);
 }

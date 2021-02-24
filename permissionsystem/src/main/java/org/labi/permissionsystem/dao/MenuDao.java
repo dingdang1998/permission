@@ -22,9 +22,16 @@ public interface MenuDao {
     List<Menu> getAllMenusWithRole();
 
     /**
-     * 根据用户id加载该用户的权限下所应该加载的路径
+     * 根据用户id加载该用户的角色下所应该加载的路径
      * @return
      * @param userId
      */
     List<Menu> getMenusByUserId(@Param("userId") int userId);
+
+    /**
+     * 根据角色id查询该角色所对应的菜单ids
+     * @param rid
+     * @return
+     */
+    List<Integer> getMenuIdsByRid(@Param("rid")Integer rid);
 }

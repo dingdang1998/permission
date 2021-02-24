@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,7 +46,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         user.setEnabled(User.ENABLE);
         save(user);
         //添加用户--角色关系,注册的用户初始角色都为（7--普通用户）
-        roleService.addUserRole(user.getId(), 7);
+        Integer[] roleIds = {7};
+        roleService.addUserRole(user.getId(), roleIds);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         IPage<User> iPage = new Page<>(page, size);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         //排除对password的查询
-        queryWrapper.select(User.class, i -> !i.getProperty().equals("password"));
+        queryWrapper.select(User.class, i -> !"password".equals(i.getProperty()));
         //获取当前登录用户所具有的角色
         UserRoles userRoles = (UserRoles) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!checkUserRoles(userRoles.getRoles())) {
@@ -79,6 +81,49 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         user.setId(id);
         user.setEnabled(status);
         updateById(user);
+    }
+
+    @Override
+    public void addUserByAdmin(UserRoles userRoles) {
+        //转换成User
+        User user = new User();
+        user.setUsername(userRoles.getUsername());
+        user.setName(userRoles.getName());
+        user.setEnabled(User.ENABLE);
+        user.setPassword(passwordEncryption(userRoles.getPassword()));
+        //添加
+        save(user);
+        //增加用户--角色关联关系
+        Integer[] intRoles = roleListToArray(userRoles.getRoles());
+        roleService.addUserRole(user.getId(), intRoles);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUserByAdmin(UserRoles userRoles) {
+        //转换成User
+        User user = new User();
+        user.setId(userRoles.getId());
+        user.setUsername(userRoles.getUsername());
+        user.setName(userRoles.getName());
+        user.setEnabled(userRoles.getEnabled());
+        user.setPassword(passwordEncryption(userRoles.getPassword()));
+        //修改
+        updateById(user);
+        //修改用户--角色关联关系
+        //删除用户原有角色
+        roleService.deleteUserRoleByUserId(user.getId());
+        //添加新修改的角色
+        Integer[] intRoles = roleListToArray(userRoles.getRoles());
+        roleService.addUserRole(user.getId(), intRoles);
+    }
+
+    @Override
+    public void deleteUserByAdmin(int userId) {
+        //删除用户
+        removeById(userId);
+        //删除用户--角色关系
+        roleService.deleteUserRoleByUserId(userId);
     }
 
     @Override
@@ -123,5 +168,19 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             }
         }
         return false;
+    }
+
+    /**
+     * 提取角色id
+     *
+     * @param roles
+     * @return
+     */
+    private Integer[] roleListToArray(List<Role> roles) {
+        Integer[] intRoles = new Integer[roles.size()];
+        for (int i = 0; i < roles.size(); i++) {
+            intRoles[i] = roles.get(i).getId();
+        }
+        return intRoles;
     }
 }
