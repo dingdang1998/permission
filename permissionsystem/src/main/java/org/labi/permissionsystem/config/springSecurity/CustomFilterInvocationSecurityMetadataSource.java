@@ -64,7 +64,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
                 }
             }
             //匹配不到的路径
-            return SecurityConfig.createList("ROLE_login");
+            return SecurityConfig.createList("ROLE_LOGIN");
         }
 
     }
