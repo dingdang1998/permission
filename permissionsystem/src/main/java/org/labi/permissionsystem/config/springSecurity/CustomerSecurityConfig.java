@@ -179,11 +179,10 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
                     resp.setContentType(TYPE);
                     resp.setStatus(401);
                     PrintWriter out = resp.getWriter();
-                    RespBean respBean = RespBean.error(CharacterBean.accessFailed);
                     if (authException instanceof InsufficientAuthenticationException) {
-                        respBean.setMsg("请求失败，请联系管理员!");
+                        RespBean respBean = RespBean.error("请求失败，请联系管理员");
+                        out.write(new ObjectMapper().writeValueAsString(respBean));
                     }
-                    out.write(new ObjectMapper().writeValueAsString(respBean));
                     out.flush();
                     out.close();
                 });

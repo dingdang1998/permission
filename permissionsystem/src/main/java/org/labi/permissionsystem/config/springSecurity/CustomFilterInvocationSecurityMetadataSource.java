@@ -49,7 +49,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
 
         if (antPathMatcher.match(addUser, requestUrl) || antPathMatcher.match(checkUsername, requestUrl)) {
             //放开一些不需要验证的路径
-            return SecurityConfig.createList("ROLE_permit");
+            return SecurityConfig.createList("ROLE_PERMIT");
         } else {
             //获取所有路径及其所匹配的角色
             List<Menu> allMenusWithRole = menuService.getAllMenusWithRole();

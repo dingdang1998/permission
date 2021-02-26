@@ -36,8 +36,8 @@ public class CustomUrlDecisionManager implements AccessDecisionManager {
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
         for (ConfigAttribute configAttribute : collection) {
             String needRole = configAttribute.getAttribute();
-            //拥有permit的接口不需要验证
-            if ("ROLE_permit".equals(needRole)) {
+            //拥有ROLE_PERMIT的接口不需要验证
+            if ("ROLE_PERMIT".equals(needRole)) {
                 return;
             }
 
@@ -55,12 +55,10 @@ public class CustomUrlDecisionManager implements AccessDecisionManager {
             for (GrantedAuthority grantedAuthority : authorities) {
                 if (grantedAuthority.getAuthority().equals(needRole)) {
                     return;
-                } else {
-                    throw new AccessDeniedException("权限不足，请联系管理员");
                 }
             }
         }
-
+        throw new AccessDeniedException("权限不足，请联系管理员");
     }
 
     @Override
