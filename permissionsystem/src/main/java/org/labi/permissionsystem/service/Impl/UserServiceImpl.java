@@ -107,15 +107,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         user.setUsername(userRoles.getUsername());
         user.setName(userRoles.getName());
         user.setEnabled(userRoles.getEnabled());
-        user.setPassword(passwordEncryption(userRoles.getPassword()));
         //修改
         updateById(user);
-        //修改用户--角色关联关系
-        //删除用户原有角色
-        roleService.deleteUserRoleByUserId(user.getId());
-        //添加新修改的角色
-        Integer[] intRoles = roleListToArray(userRoles.getRoles());
-        roleService.addUserRole(user.getId(), intRoles);
     }
 
     @Override

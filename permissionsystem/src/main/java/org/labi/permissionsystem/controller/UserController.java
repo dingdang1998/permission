@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @createTime 2021年01月26日 10:23:00
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/employee/basic")
 public class UserController {
     @Autowired
     private UserService userService;
