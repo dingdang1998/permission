@@ -24,21 +24,32 @@
     </resultMap>
     <resultMap id="Menus2" type="org.labi.permissionsystem.bean.Menu" extends="BaseResultMap">
         <collection property="children" ofType="org.labi.permissionsystem.bean.Menu">
-            <id column="id2" property="id" jdbcType="INTEGER" />
-            <result column="url2" property="url" jdbcType="VARCHAR" />
-            <result column="path2" property="path" jdbcType="VARCHAR" />
-            <result column="component2" property="component" jdbcType="VARCHAR" />
-            <result column="name2" property="name" jdbcType="VARCHAR" />
-            <result column="iconCls2" property="iconCls" jdbcType="VARCHAR" />
-            <result column="parentId2" property="parentId" jdbcType="INTEGER" />
-            <result column="enabled2" property="enabled" jdbcType="BIT" />
+            <id column="id2" property="id" jdbcType="INTEGER"/>
+            <result column="url2" property="url" jdbcType="VARCHAR"/>
+            <result column="path2" property="path" jdbcType="VARCHAR"/>
+            <result column="component2" property="component" jdbcType="VARCHAR"/>
+            <result column="name2" property="name" jdbcType="VARCHAR"/>
+            <result column="iconCls2" property="iconCls" jdbcType="VARCHAR"/>
+            <result column="parentId2" property="parentId" jdbcType="INTEGER"/>
+            <result column="enabled2" property="enabled" jdbcType="BIT"/>
             <association property="meta" javaType="org.labi.permissionsystem.bean.Meta">
-                <result column="keepAlive2" property="keepAlive" jdbcType="BIT" />
-                <result column="requireAuth2" property="requireAuth" jdbcType="BIT" />
+                <result column="keepAlive2" property="keepAlive" jdbcType="BIT"/>
+                <result column="requireAuth2" property="requireAuth" jdbcType="BIT"/>
             </association>
         </collection>
     </resultMap>
-
+    <resultMap id="MenuWithChildren" type="org.labi.permissionsystem.bean.Menu" extends="BaseResultMap">
+        <id column="id1" property="id"/>
+        <result column="name1" property="name"/>
+        <collection property="children" ofType="org.labi.permissionsystem.bean.Menu">
+            <id column="id2" property="id"/>
+            <result column="name2" property="name"/>
+            <collection property="children" ofType="org.labi.permissionsystem.bean.Menu">
+                <id column="id3" property="id"/>
+                <result column="name3" property="name"/>
+            </collection>
+        </collection>
+    </resultMap>
     <select id="getAllMenusWithRole" resultMap="MenuWithRole">
         SELECT
             menu.*,
@@ -80,4 +91,34 @@
     <select id="getMenuIdsByRid" resultType="java.lang.Integer">
         select mid from menu_role where rid=#{rid}
     </select>
+    <select id="getAllMenus" resultMap="MenuWithChildren">
+        SELECT
+            m1.`id` AS id1,
+            m1.`name` AS name1,
+            m2.`id` AS id2,
+            m2.`name` AS name2,
+            m3.`id` AS id3,
+            m3.`name` AS name3
+        FROM
+            menu m1,
+            menu m2,
+            menu m3
+        WHERE
+            m1.`id` = m2.`parentId`
+            AND m2.`id` = m3.`parentId`
+            AND m3.`enabled` = TRUE
+        ORDER BY
+            m1.`id`,
+            m2.`id`,
+            m3.`id`
+    </select>
+    <update id="updateMidsByRid">
+        insert into menu_role(mid,rid) values
+        <foreach collection="mids" separator="," item="mid">
+            (#{mid},#{rid})
+        </foreach>
+    </update>
+    <delete id="deleteByRid">
+        delete from menu_role where rid=#{rid}
+    </delete>
 </mapper>

@@ -7,6 +7,7 @@ import org.labi.permissionsystem.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +37,23 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<Integer> getMenuIdsByRid(Integer rid) {
-        return getMenuIdsByRid(rid);
+        return menuDao.getMenuIdsByRid(rid);
+    }
+
+    @Override
+    public List<Menu> getAllMenus() {
+        return menuDao.getAllMenus();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateMidsByRid(Integer rid, Integer[] mids) {
+        //删除角色--菜单关系
+        menuDao.deleteByRid(rid);
+        //新增关系
+        if (mids == null || mids.length == 0) {
+            return true;
+        }
+        return menuDao.updateMidsByRid(rid, mids) == mids.length;
     }
 }

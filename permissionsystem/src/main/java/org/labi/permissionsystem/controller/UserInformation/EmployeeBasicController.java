@@ -1,25 +1,31 @@
-package org.labi.permissionsystem.controller;
+package org.labi.permissionsystem.controller.UserInformation;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.labi.permissionsystem.bean.RespPageBean;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.bean.UserRoles;
+import org.labi.permissionsystem.bean.beanTools.RespPageBean;
+import org.labi.permissionsystem.bean.beanTools.UserExportBean;
 import org.labi.permissionsystem.service.UserService;
 import org.labi.permissionsystem.utils.CharacterBean;
 import org.labi.permissionsystem.utils.RespBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+
 /**
  * @author labi
  * @version 1.0.0
  * @ClassName UserController.java
- * @Description 用户控制层
+ * @Description 基本资料
  * @createTime 2021年01月26日 10:23:00
  */
 @RestController
 @RequestMapping("/employee/basic")
-public class UserController {
+public class EmployeeBasicController {
     @Autowired
     private UserService userService;
 
@@ -111,5 +117,23 @@ public class UserController {
     public RespBean deleteUserByAdmin(@PathVariable int userId) {
         userService.deleteUserByAdmin(userId);
         return RespBean.ok(CharacterBean.success);
+    }
+
+    /**
+     * 导出数据
+     *
+     * @param response
+     * @param name
+     * @throws IOException
+     */
+    @GetMapping("/export")
+    public void download(HttpServletResponse response, @RequestParam(value = "name", required = false) String name) throws IOException {
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        //防止中文乱码
+        String fileName = URLEncoder.encode("用户信息", "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+        //导出
+        EasyExcel.write(response.getOutputStream(), UserExportBean.class).sheet().doWrite(userService.getUsersToExport(name));
     }
 }

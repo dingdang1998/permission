@@ -37,6 +37,16 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void addRole(Role role) {
+        role.setName(addPrefix(role.getName()));
         roleDao.addRole(role);
+    }
+
+    /**
+     * 为角色name增加前缀
+     *
+     * @return
+     */
+    private String addPrefix(String name) {
+        return Role.ROLE_ + name;
     }
 }

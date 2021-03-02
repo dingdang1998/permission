@@ -39,5 +39,5 @@ public interface RoleDao {
      * 添加角色
      * @param role
      */
-    void addRole(@Param("role")Role role);
+    void addRole(Role role);
 }

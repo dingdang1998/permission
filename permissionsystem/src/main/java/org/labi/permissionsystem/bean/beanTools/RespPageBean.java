@@ -1,4 +1,4 @@
-package org.labi.permissionsystem.bean;
+package org.labi.permissionsystem.bean.beanTools;
 
 import lombok.Data;
 

@@ -10,6 +10,11 @@ import lombok.Data;
  **/
 @Data
 public class Role {
+
+    /**
+     * name前缀
+     */
+    public static final String ROLE_ = "ROLE_";
     /**
      * 角色表主键id
      */

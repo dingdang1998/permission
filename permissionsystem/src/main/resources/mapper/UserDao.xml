@@ -4,4 +4,16 @@
     <select id="getRolesByUserId" resultType="org.labi.permissionsystem.bean.Role">
         select r.* from role r,usr_role urr where urr.rid=r.id and urr.usrid=#{userId}
     </select>
+    <select id="getUsersToExport" resultType="org.labi.permissionsystem.bean.beanTools.UserExportBean">
+        SELECT
+        usr.name AS name,
+        usr.username AS username
+        FROM
+        usr
+        WHERE
+        1 = 1
+        <if test="name!=null">
+            AND usr.name = #{name}
+        </if>
+    </select>
 </mapper>

@@ -32,4 +32,20 @@ public interface MenuService {
      * @return
      */
     List<Integer> getMenuIdsByRid(Integer rid);
+
+    /**
+     * 查询所有菜单及其子菜单
+     *
+     * @return
+     */
+    List<Menu> getAllMenus();
+
+    /**
+     * 修改角色可访问的菜单
+     *
+     * @param rid
+     * @param mids
+     * @return
+     */
+    boolean updateMidsByRid(Integer rid, Integer[] mids);
 }

@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.labi.permissionsystem.bean.Role;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.bean.UserRoles;
+import org.labi.permissionsystem.bean.beanTools.UserExportBean;
 import org.labi.permissionsystem.dao.UserDao;
 import org.labi.permissionsystem.service.RoleService;
 import org.labi.permissionsystem.service.UserService;
@@ -18,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -99,7 +99,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void updateUserByAdmin(UserRoles userRoles) {
         //转换成User
         User user = new User();
@@ -117,6 +116,18 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         removeById(userId);
         //删除用户--角色关系
         roleService.deleteUserRoleByUserId(userId);
+    }
+
+    @Override
+    public List<UserExportBean> getUsersToExport(String name) {
+        //获取当前登录用户所具有的角色
+        UserRoles userRoles = (UserRoles) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!checkUserRoles(userRoles.getRoles())) {
+            //没有admin角色，只能导出自己的信息
+            return userDao.getUsersToExport(userRoles.getName());
+        }
+        //有admin角色
+        return userDao.getUsersToExport(name);
     }
 
     @Override

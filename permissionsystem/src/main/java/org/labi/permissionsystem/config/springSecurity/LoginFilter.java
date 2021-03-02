@@ -37,7 +37,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             throw new AuthenticationServiceException("请求方式不支持：" + request.getMethod());
         }
         //如果是JSON传递参数，则按照JSON的方式解析，如果不是，则调用默认的方法解析
-        if (request.getContentType().equals(MediaType.APPLICATION_JSON_VALUE) || request.getContentType().equals(MediaType.APPLICATION_JSON_UTF8_VALUE)) {
+        if (request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE)) {
             Map<String, String> loginData = new HashMap<>();
             try {
                 //将JSON字符串数据映射到Map上

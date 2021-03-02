@@ -32,9 +32,4 @@ public class MenuController {
     public List<Menu> getMenusByUserId() {
         return menuService.getMenusByUserId();
     }
-
-    @GetMapping("getMenuIds/{rid}")
-    public List<Integer> getMenuIdsByRid(@PathVariable Integer rid) {
-        return menuService.getMenuIdsByRid(rid);
-    }
 }

@@ -30,7 +30,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
     /**
      * 注册用户的路径
      */
-    private static final String addUser = "/user/addUser*";
+    private static final String addUser = "/employee/basic/addUser*";
 
     /**
      * 检查用户名路径

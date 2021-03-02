@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.bean.UserRoles;
+import org.labi.permissionsystem.bean.beanTools.UserExportBean;
+
+import java.util.List;
 
 /**
  * @author labi
@@ -64,4 +67,11 @@ public interface UserService extends IService<User> {
      * @param userId
      */
     void deleteUserByAdmin(int userId);
+
+    /**
+     * 导出查询
+     * @return
+     * @param name
+     */
+    List<UserExportBean> getUsersToExport(String name);
 }

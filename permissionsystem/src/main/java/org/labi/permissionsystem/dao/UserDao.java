@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.labi.permissionsystem.bean.Role;
 import org.labi.permissionsystem.bean.User;
+import org.labi.permissionsystem.bean.beanTools.UserExportBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,4 +24,11 @@ public interface UserDao extends BaseMapper<User> {
      * @return
      */
     List<Role> getRolesByUserId(@Param("userId") int userId);
+
+    /**
+     * 导出查询
+     * @param name
+     * @return
+     */
+    List<UserExportBean> getUsersToExport(@Param("name")String name);
 }
