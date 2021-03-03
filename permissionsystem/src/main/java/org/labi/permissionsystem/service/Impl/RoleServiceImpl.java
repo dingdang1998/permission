@@ -5,6 +5,7 @@ import org.labi.permissionsystem.dao.RoleDao;
 import org.labi.permissionsystem.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class RoleServiceImpl implements RoleService {
     private RoleDao roleDao;
 
     @Override
-    public void addUserRole(int userId, Integer[] roleIds) {
-        roleDao.addUserRole(userId, roleIds);
+    public Integer addUserRole(int userId, Integer[] roleIds) {
+        return roleDao.addUserRole(userId, roleIds);
     }
 
     @Override
@@ -39,6 +40,15 @@ public class RoleServiceImpl implements RoleService {
     public void addRole(Role role) {
         role.setName(addPrefix(role.getName()));
         roleDao.addRole(role);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateUserRoles(Integer userId, Integer[] rids) {
+        //删除用户原有角色
+        roleDao.deleteUserRoleByUserId(userId);
+        //添加新的用户--角色关系
+        return roleDao.addUserRole(userId, rids) == rids.length;
     }
 
     /**

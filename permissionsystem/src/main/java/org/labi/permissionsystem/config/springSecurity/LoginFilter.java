@@ -22,8 +22,14 @@ import java.util.Map;
  * @createTime 2021年01月25日 18:27:00
  */
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
+
+    private static final String POST = "POST";
+
     /**
-     * 尝试身份验证
+     * 1、拦截登录请求，获取username和password
+     * 2、构建UsernamePasswordAuthenticationToken对象，username--principal  password--credentials
+     * 3、为details属性赋值
+     * 4、调用authenticate方法做校验
      *
      * @param request
      * @param response
@@ -33,7 +39,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         //不是post请求直接抛出异常
-        if (!request.getMethod().equals("POST")) {
+        if (!POST.equals(request.getMethod())) {
             throw new AuthenticationServiceException("请求方式不支持：" + request.getMethod());
         }
         //如果是JSON传递参数，则按照JSON的方式解析，如果不是，则调用默认的方法解析
@@ -55,12 +61,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 password = "";
             }
             username = username.trim();
-            //将用户名和密码封装成 用户名密码验证令牌
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
-            //设置详细信息
             setDetails(request, authRequest);
             return this.getAuthenticationManager().authenticate(authRequest);
         } else {
+            //如果是key--value传值，则调用父类的处理方法
             return super.attemptAuthentication(request, response);
         }
     }

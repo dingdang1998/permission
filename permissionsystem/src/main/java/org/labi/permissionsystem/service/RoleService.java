@@ -16,7 +16,7 @@ public interface RoleService {
      * @param userId
      * @param roleIds
      */
-    void addUserRole(int userId, Integer[] roleIds);
+    Integer addUserRole(int userId, Integer[] roleIds);
 
     /**
      * 删除用户--角色关系
@@ -38,4 +38,13 @@ public interface RoleService {
      * @param role
      */
     void addRole(Role role);
+
+    /**
+     * 修改用户所拥有的角色
+     *
+     * @param userId
+     * @param rids
+     * @return
+     */
+    boolean updateUserRoles(Integer userId, Integer[] rids);
 }

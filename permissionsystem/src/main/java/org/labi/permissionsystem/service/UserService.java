@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.bean.UserRoles;
 import org.labi.permissionsystem.bean.beanTools.UserExportBean;
+import org.labi.permissionsystem.bean.beanTools.UserRolesTool;
 
 import java.util.List;
 
@@ -58,20 +59,31 @@ public interface UserService extends IService<User> {
 
     /**
      * admin编辑用户信息
+     *
      * @param userRoles
      */
     void updateUserByAdmin(UserRoles userRoles);
 
     /**
      * admin删除用户
+     *
      * @param userId
      */
     void deleteUserByAdmin(int userId);
 
     /**
      * 导出查询
-     * @return
+     *
      * @param name
+     * @return
      */
     List<UserExportBean> getUsersToExport(String name);
+
+    /**
+     * 查询所有用户及其所拥有的角色
+     *
+     * @param keywords
+     * @return
+     */
+    List<UserRolesTool> getAllUserWithRoles(String keywords);
 }

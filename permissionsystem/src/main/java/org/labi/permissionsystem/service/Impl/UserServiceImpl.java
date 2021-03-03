@@ -9,16 +9,18 @@ import org.labi.permissionsystem.bean.Role;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.bean.UserRoles;
 import org.labi.permissionsystem.bean.beanTools.UserExportBean;
+import org.labi.permissionsystem.bean.beanTools.UserRolesTool;
 import org.labi.permissionsystem.dao.UserDao;
 import org.labi.permissionsystem.service.RoleService;
 import org.labi.permissionsystem.service.UserService;
+import org.labi.permissionsystem.utils.UserRolesUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         //排除对password的查询
         queryWrapper.select(User.class, i -> !"password".equals(i.getProperty()));
         //获取当前登录用户所具有的角色
-        UserRoles userRoles = (UserRoles) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserRoles userRoles = UserRolesUtils.getCurrent();
         if (!checkUserRoles(userRoles.getRoles())) {
             queryWrapper.eq("id", userRoles.getId());
         }
@@ -121,13 +123,21 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Override
     public List<UserExportBean> getUsersToExport(String name) {
         //获取当前登录用户所具有的角色
-        UserRoles userRoles = (UserRoles) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserRoles userRoles = UserRolesUtils.getCurrent();
         if (!checkUserRoles(userRoles.getRoles())) {
             //没有admin角色，只能导出自己的信息
             return userDao.getUsersToExport(userRoles.getName());
         }
         //有admin角色
+        if (StringUtils.isEmpty(name)) {
+            name = null;
+        }
         return userDao.getUsersToExport(name);
+    }
+
+    @Override
+    public List<UserRolesTool> getAllUserWithRoles(String name) {
+        return userDao.getAllUserWithRoles(UserRolesUtils.getCurrent().getId(), name);
     }
 
     @Override

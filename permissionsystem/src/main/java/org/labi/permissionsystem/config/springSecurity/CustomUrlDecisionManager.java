@@ -45,9 +45,9 @@ public class CustomUrlDecisionManager implements AccessDecisionManager {
                 //认证方式属于匿名认证令牌
                 if (authentication instanceof AnonymousAuthenticationToken) {
                     throw new AccessDeniedException("尚未登陆，请登录");
+                } else {
+                    return;
                 }
-            } else {
-                return;
             }
 
             //当前登录用户所具有的权限

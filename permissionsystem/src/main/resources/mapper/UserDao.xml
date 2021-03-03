@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.labi.permissionsystem.dao.UserDao">
+    <resultMap id="UserWithRoles" type="org.labi.permissionsystem.bean.beanTools.UserRolesTool">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <collection property="roles" ofType="org.labi.permissionsystem.bean.Role">
+            <id column="rid" property="id"/>
+            <result column="rname" property="name"/>
+            <result column="rnameZh" property="nameZh"/>
+        </collection>
+    </resultMap>
     <select id="getRolesByUserId" resultType="org.labi.permissionsystem.bean.Role">
         select r.* from role r,usr_role urr where urr.rid=r.id and urr.usrid=#{userId}
     </select>
@@ -15,5 +27,26 @@
         <if test="name!=null">
             AND usr.name = #{name}
         </if>
+    </select>
+    <select id="getAllUserWithRoles" resultMap="UserWithRoles">
+        SELECT
+        usr.id,
+        usr.name,
+        usr.enabled,
+        usr.username,
+        r.`id` AS rid,
+        r.`name` AS rname,
+        r.`nameZh` AS rnameZh
+        FROM
+        usr
+        LEFT JOIN usr_role usrr ON usr.`id` = usrr.`usrid`
+        LEFT JOIN role r ON usrr.`rid` = r.`id`
+        WHERE
+        usr.`id` != #{userId}
+        <if test="name!=null">
+            AND usr.name like concat('%',#{name},'%')
+        </if>
+        ORDER BY
+        usr.id
     </select>
 </mapper>

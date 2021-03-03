@@ -1,11 +1,10 @@
 package org.labi.permissionsystem.service.Impl;
 
 import org.labi.permissionsystem.bean.Menu;
-import org.labi.permissionsystem.bean.UserRoles;
 import org.labi.permissionsystem.dao.MenuDao;
 import org.labi.permissionsystem.service.MenuService;
+import org.labi.permissionsystem.utils.UserRolesUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +30,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<Menu> getMenusByUserId() {
         //获取当前登陆用户id
-        Integer id = ((UserRoles) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getId();
-        return menuDao.getMenusByUserId(id);
+        return menuDao.getMenusByUserId(UserRolesUtils.getCurrent().getId());
     }
 
     @Override

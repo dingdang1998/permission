@@ -19,8 +19,9 @@ public interface RoleDao {
      *
      * @param userId
      * @param roleIds
+     * @return
      */
-    void addUserRole(@Param("userId") int userId, @Param("roleIds") Integer[] roleIds);
+    Integer addUserRole(@Param("userId") int userId, @Param("roleIds") Integer[] roleIds);
 
     /**
      * 删除用户--角色关系
