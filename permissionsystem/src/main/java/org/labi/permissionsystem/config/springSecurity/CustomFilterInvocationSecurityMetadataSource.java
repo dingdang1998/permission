@@ -37,7 +37,15 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
      */
     private static final String checkUsername = "/user/checkUsername*";
 
+    /**
+     * 获取所有菜单
+     */
     private static final String ALLMENU = "/menu/getMenus**";
+
+    /**
+     * 验证码
+     */
+    private static final String VERIFY_CODE = "/vc.jpg";
 
     /**
      * 路径匹配器
@@ -49,7 +57,10 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
         //获取请求路径
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
 
-        if (antPathMatcher.match(addUser, requestUrl) || antPathMatcher.match(checkUsername, requestUrl) || antPathMatcher.match(ALLMENU, requestUrl)) {
+        if (antPathMatcher.match(addUser, requestUrl) ||
+                antPathMatcher.match(checkUsername, requestUrl) ||
+                antPathMatcher.match(ALLMENU, requestUrl) ||
+                antPathMatcher.match(VERIFY_CODE, requestUrl)) {
             //放开一些不需要验证的路径
             return SecurityConfig.createList("ROLE_PERMIT");
         } else {

@@ -1,6 +1,9 @@
 package org.labi.permissionsystem.config.springSecurity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.code.kaptcha.Producer;
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.util.Config;
 import org.labi.permissionsystem.bean.User;
 import org.labi.permissionsystem.service.Impl.UserServiceImpl;
 import org.labi.permissionsystem.utils.CharacterBean;
@@ -26,6 +29,7 @@ import org.springframework.security.web.session.ConcurrentSessionFilter;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.Properties;
 
 /**
  * @author labi
@@ -88,6 +92,24 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/js/**", "/css/**", "/images/**", "/verifyCode");
+    }
+
+    /**
+     * 验证码配置
+     *
+     * @return
+     */
+    @Bean
+    Producer verifyCode() {
+        Properties properties = new Properties();
+        properties.setProperty("kaptcha.image.width", "150");
+        properties.setProperty("kaptcha.image.height", "50");
+        properties.setProperty("kaptcha.textproducer.char.string", "0123456789");
+        properties.setProperty("kaptcha.textproducer.char.length", "4");
+        Config config = new Config(properties);
+        DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
+        defaultKaptcha.setConfig(config);
+        return defaultKaptcha;
     }
 
     @Bean

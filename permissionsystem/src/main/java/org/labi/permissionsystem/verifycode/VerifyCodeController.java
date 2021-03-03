@@ -1,31 +1,37 @@
 package org.labi.permissionsystem.verifycode;
 
+import com.google.code.kaptcha.Producer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * @author labi
- * @version 1.0.0
- * @ClassName VerifyCodeController.java
- * @Description 前端获取验证码接口
- * @createTime 2021年01月25日 19:25:00
- */
+ * @program: permissionsystem
+ * @description: 验证码
+ * @author: dzp
+ * @create: 2021-03-03 16:30
+ **/
 @RestController
 public class VerifyCodeController {
 
-    @GetMapping("/verifyCode")
-    public void code(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        VerifyCode vc = new VerifyCode();
-        BufferedImage image = vc.getImage();
-        String text = vc.getText();
-        HttpSession session = req.getSession();
-        session.setAttribute("index_code", text);
-        VerifyCode.output(image, resp.getOutputStream());
+    @Autowired(required = false)
+    private Producer producer;
+
+    @GetMapping("/vc.jpg")
+    public void getVerifyCode(HttpServletResponse resp, HttpSession session) throws IOException {
+        resp.setContentType("image/jpeg");
+        String text = producer.createText();
+        session.setAttribute("verify_code", text);
+        BufferedImage image = producer.createImage(text);
+        try (ServletOutputStream out = resp.getOutputStream()) {
+            ImageIO.write(image, "jpg", out);
+        }
     }
 }
