@@ -156,8 +156,8 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
                 errorMsg = "密码输入错误，请重新输入";
             } else if (e instanceof UsernameNotFoundException) {
                 errorMsg = e.getMessage();
-            } else if (e instanceof AuthenticationServiceException) {
-                errorMsg = "验证码错误";
+            } else if(e instanceof AuthenticationServiceException){
+                errorMsg = e.getMessage();
             }
             RespBean error = new RespBean(CharacterBean.FIVE_HUNDRED, errorMsg, null);
             out.write(new ObjectMapper().writeValueAsString(error));
