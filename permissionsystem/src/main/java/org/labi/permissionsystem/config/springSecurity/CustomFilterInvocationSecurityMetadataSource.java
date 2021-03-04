@@ -45,7 +45,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
     /**
      * 验证码
      */
-    private static final String VERIFY_CODE = "/vc.jpg";
+    private static final String VERIFY_CODE = "/vc.jpg**";
 
     /**
      * 路径匹配器

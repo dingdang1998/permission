@@ -42,6 +42,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         if (!POST.equals(request.getMethod())) {
             throw new AuthenticationServiceException("请求方式不支持：" + request.getMethod());
         }
+        //获取生成的验证码
+        String verifyCode = (String) request.getSession().getAttribute("verify_code");
         //如果是JSON传递参数，则按照JSON的方式解析，如果不是，则调用默认的方法解析
         if (request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE)) {
             Map<String, String> loginData = new HashMap<>();
@@ -50,6 +52,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 loginData = new ObjectMapper().readValue(request.getInputStream(), Map.class);
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                String code = loginData.get("code");
+                checkCode(code, verifyCode);
             }
             //得到用户名和密码
             String username = loginData.get(getUsernameParameter());
@@ -67,6 +72,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         } else {
             //如果是key--value传值，则调用父类的处理方法
             return super.attemptAuthentication(request, response);
+        }
+    }
+
+    /**
+     * 检查验证码是否正确
+     *
+     * @param code
+     * @param verifyCode
+     */
+    public void checkCode(String code, String verifyCode) {
+        if (code == null || "".equals(code) || !code.equals(verifyCode)) {
+            //验证码不正确
+            throw new AuthenticationServiceException("验证码错误");
         }
     }
 }

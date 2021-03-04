@@ -102,8 +102,8 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     Producer verifyCode() {
         Properties properties = new Properties();
-        properties.setProperty("kaptcha.image.width", "150");
-        properties.setProperty("kaptcha.image.height", "50");
+        properties.setProperty("kaptcha.image.width", "140");
+        properties.setProperty("kaptcha.image.height", "40");
         properties.setProperty("kaptcha.textproducer.char.string", "0123456789");
         properties.setProperty("kaptcha.textproducer.char.length", "4");
         Config config = new Config(properties);
@@ -156,6 +156,8 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
                 errorMsg = "密码输入错误，请重新输入";
             } else if (e instanceof UsernameNotFoundException) {
                 errorMsg = e.getMessage();
+            } else if (e instanceof AuthenticationServiceException) {
+                errorMsg = "验证码错误";
             }
             RespBean error = new RespBean(CharacterBean.FIVE_HUNDRED, errorMsg, null);
             out.write(new ObjectMapper().writeValueAsString(error));
