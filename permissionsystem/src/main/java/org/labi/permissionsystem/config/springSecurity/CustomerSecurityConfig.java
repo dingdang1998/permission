@@ -24,8 +24,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.session.ConcurrentSessionFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -42,10 +42,6 @@ import java.util.Properties;
 public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
-     * 允许最大登陆数
-     */
-    private static final int ONE = 1;
-    /**
      * 内容类型
      */
     private static final String TYPE = "application/json;charset=utf-8";
@@ -56,6 +52,12 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
     private CustomFilterInvocationSecurityMetadataSource customFilterInvocationSecurityMetadataSource;
     @Autowired
     private UserServiceImpl userServiceImpl;
+
+    @Bean
+    HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
 
     @Bean
     SessionRegistryImpl sessionRegistry() {
@@ -156,7 +158,7 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
                 errorMsg = "密码输入错误，请重新输入";
             } else if (e instanceof UsernameNotFoundException) {
                 errorMsg = e.getMessage();
-            } else if(e instanceof AuthenticationServiceException){
+            } else if (e instanceof AuthenticationServiceException) {
                 errorMsg = e.getMessage();
             }
             RespBean error = new RespBean(CharacterBean.FIVE_HUNDRED, errorMsg, null);
@@ -164,13 +166,12 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
             out.flush();
             out.close();
         });
-        //设置认证管理器
-        loginFilter.setAuthenticationManager(authenticationManagerBean());
         //要拦截的地址
         loginFilter.setFilterProcessesUrl("/doLogin");
-        //只能登陆一台设备
-        ConcurrentSessionControlAuthenticationStrategy sessionStrategy = new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry());
-        sessionStrategy.setMaximumSessions(ONE);
+        //设置认证管理器
+        loginFilter.setAuthenticationManager(authenticationManagerBean());
+        //只能登陆一台设备（这里只要开启并发会话控制即可，默认就是只允许登录一台设备）
+        CustomerConcurrentSessionControlAuthenticationStrategy sessionStrategy = new CustomerConcurrentSessionControlAuthenticationStrategy(sessionRegistry());
         loginFilter.setSessionAuthenticationStrategy(sessionStrategy);
         return loginFilter;
     }

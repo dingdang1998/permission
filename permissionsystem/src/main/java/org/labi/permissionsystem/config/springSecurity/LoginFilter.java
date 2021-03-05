@@ -1,11 +1,14 @@
 package org.labi.permissionsystem.config.springSecurity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.labi.permissionsystem.bean.UserRoles;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +27,9 @@ import java.util.Map;
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private static final String POST = "POST";
+
+    @Autowired
+    SessionRegistryImpl sessionRegistryImpl;
 
     /**
      * 1、拦截登录请求，获取username和password
@@ -68,9 +74,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             username = username.trim();
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
             setDetails(request, authRequest);
+            //手动注册session
+            UserRoles principal = new UserRoles();
+            principal.setUsername(username);
+            sessionRegistryImpl.registerNewSession(request.getSession(true).getId(), principal);
             return this.getAuthenticationManager().authenticate(authRequest);
         } else {
             //如果是key--value传值，则调用父类的处理方法
+            checkCode(request.getParameter("code"), verifyCode);
             return super.attemptAuthentication(request, response);
         }
     }

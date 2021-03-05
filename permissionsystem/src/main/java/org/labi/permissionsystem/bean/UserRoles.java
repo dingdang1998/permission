@@ -2,6 +2,9 @@ package org.labi.permissionsystem.bean;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author labi
@@ -17,8 +21,9 @@ import java.util.List;
  * @Description 用户具有的角色
  * @createTime 2021年02月21日 21:41:00
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@ToString
 public class UserRoles extends User implements UserDetails {
     /**
      * 用户具有的角色
@@ -78,6 +83,23 @@ public class UserRoles extends User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return getEnabled() == 1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserRoles userRoles = (UserRoles) o;
+        return Objects.equals(getUsername(), userRoles.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername());
     }
 }
 
