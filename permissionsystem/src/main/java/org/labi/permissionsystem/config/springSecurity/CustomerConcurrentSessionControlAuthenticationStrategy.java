@@ -39,6 +39,7 @@ public class CustomerConcurrentSessionControlAuthenticationStrategy extends Conc
                             new Object[]{allowableSessions}, "Maximum sessions of {0} for this principal exceeded"));
         }
         sessions.sort(Comparator.comparing(SessionInformation::getLastRequest));
+        //写死，默认一端登录，另一端的session失效
         List<SessionInformation> sessionsToBeExpired = sessions.subList(0, 1);
         for (SessionInformation session : sessionsToBeExpired) {
             session.expireNow();

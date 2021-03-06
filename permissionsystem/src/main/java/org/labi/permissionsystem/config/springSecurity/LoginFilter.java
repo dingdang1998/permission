@@ -29,7 +29,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private static final String POST = "POST";
 
     @Autowired
-    SessionRegistryImpl sessionRegistryImpl;
+    private SessionRegistryImpl sessionRegistryImpl;
 
     /**
      * 1、拦截登录请求，获取username和password
@@ -48,7 +48,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         if (!POST.equals(request.getMethod())) {
             throw new AuthenticationServiceException("请求方式不支持：" + request.getMethod());
         }
-        //获取生成的验证码
+        //获取服务端生成的验证码()
         String verifyCode = (String) request.getSession().getAttribute("verify_code");
         //如果是JSON传递参数，则按照JSON的方式解析，如果不是，则调用默认的方法解析
         if (request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE)) {
@@ -62,6 +62,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 String code = loginData.get("code");
                 checkCode(code, verifyCode);
             }
+
             //得到用户名和密码
             String username = loginData.get(getUsernameParameter());
             String password = loginData.get(getPasswordParameter());
@@ -74,10 +75,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             username = username.trim();
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
             setDetails(request, authRequest);
+
             //手动注册session
             UserRoles principal = new UserRoles();
             principal.setUsername(username);
             sessionRegistryImpl.registerNewSession(request.getSession(true).getId(), principal);
+
+            //获取是否需要自动登录
+            String remember = loginData.get("remember-me");
+            if (remember != null) {
+                request.setAttribute("remember-me", "true");
+            }
             return this.getAuthenticationManager().authenticate(authRequest);
         } else {
             //如果是key--value传值，则调用父类的处理方法

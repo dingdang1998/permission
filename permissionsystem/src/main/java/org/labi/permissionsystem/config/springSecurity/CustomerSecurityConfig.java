@@ -23,9 +23,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.security.web.session.ConcurrentSessionFilter;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -54,10 +55,9 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserServiceImpl userServiceImpl;
 
     @Bean
-    HttpSessionEventPublisher httpSessionEventPublisher() {
-        return new HttpSessionEventPublisher();
+    RememberMeServices rememberMeServices() {
+        return new testToken("crayon", userServiceImpl);
     }
-
 
     @Bean
     SessionRegistryImpl sessionRegistry() {
@@ -78,10 +78,9 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
      * 设置用户相关信息
      *
      * @param auth
-     * @throws Exception
      */
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
@@ -89,10 +88,9 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
      * 设置对静态资源不拦截
      *
      * @param web
-     * @throws Exception
      */
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/js/**", "/css/**", "/images/**", "/verifyCode");
     }
 
@@ -173,6 +171,7 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
         //只能登陆一台设备（这里只要开启并发会话控制即可，默认就是只允许登录一台设备）
         CustomerConcurrentSessionControlAuthenticationStrategy sessionStrategy = new CustomerConcurrentSessionControlAuthenticationStrategy(sessionRegistry());
         loginFilter.setSessionAuthenticationStrategy(sessionStrategy);
+        loginFilter.setRememberMeServices(rememberMeServices());
         return loginFilter;
     }
 
@@ -211,6 +210,7 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
                     out.flush();
                     out.close();
                 });
+        //session冲突要做出的响应
         http.addFilterAt(new ConcurrentSessionFilter(sessionRegistry(), event -> {
             HttpServletResponse resp = event.getResponse();
             resp.setContentType(TYPE);
@@ -220,6 +220,9 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
             out.flush();
             out.close();
         }), ConcurrentSessionFilter.class);
+        //
+        http.addFilterAt(new testf(authenticationManagerBean(),rememberMeServices()),RememberMeAuthenticationFilter.class);
+        //登录认证的过滤链
         http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
