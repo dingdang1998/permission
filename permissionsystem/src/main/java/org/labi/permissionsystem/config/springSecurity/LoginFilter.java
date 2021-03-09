@@ -48,7 +48,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         if (!POST.equals(request.getMethod())) {
             throw new AuthenticationServiceException("请求方式不支持：" + request.getMethod());
         }
-        //获取服务端生成的验证码()
+        //获取服务端生成的验证码
         String verifyCode = (String) request.getSession().getAttribute("verify_code");
         //如果是JSON传递参数，则按照JSON的方式解析，如果不是，则调用默认的方法解析
         if (request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE)) {

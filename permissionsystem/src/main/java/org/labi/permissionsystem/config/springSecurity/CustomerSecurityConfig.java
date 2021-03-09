@@ -26,6 +26,7 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.session.ConcurrentSessionFilter;
 
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +57,7 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     RememberMeServices rememberMeServices() {
-        return new testToken("crayon", userServiceImpl);
+        return new TokenBasedRememberMeServices("crayon", userServiceImpl);
     }
 
     @Bean
@@ -82,6 +83,7 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
+        auth.authenticationProvider(rememberMeAuthenticationProvider());
     }
 
     /**
@@ -112,6 +114,10 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
         return defaultKaptcha;
     }
 
+    /**
+     * 用户名和密码校验提供
+     * @return
+     */
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -120,6 +126,15 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setUserDetailsService(userServiceImpl);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
+    }
+
+    /**
+     * 自动登录的支持
+     * @return
+     */
+    @Bean
+    public RememberMeAuthenticationProvider rememberMeAuthenticationProvider() {
+        return new RememberMeAuthenticationProvider("crayon");
     }
 
     @Bean
@@ -220,8 +235,8 @@ public class CustomerSecurityConfig extends WebSecurityConfigurerAdapter {
             out.flush();
             out.close();
         }), ConcurrentSessionFilter.class);
-        //
-        http.addFilterAt(new testf(authenticationManagerBean(),rememberMeServices()),RememberMeAuthenticationFilter.class);
+        //自动登录过滤链
+        http.addFilterAt(new RememberMeAuthenticationFilter(authenticationManagerBean(), rememberMeServices()), RememberMeAuthenticationFilter.class);
         //登录认证的过滤链
         http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
     }
