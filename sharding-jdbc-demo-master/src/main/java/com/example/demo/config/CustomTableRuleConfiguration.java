@@ -42,9 +42,10 @@ public class CustomTableRuleConfiguration {
      */
     public TableRuleConfiguration getUserInfoTableRuleConfiguration() {
         TableRuleConfiguration orderTableRuleConfig = new TableRuleConfiguration();
+        //逻辑表
         orderTableRuleConfig.setLogicTable("user_info");
+        //在分片的数据库中真实存在的物理表
         orderTableRuleConfig.setActualDataNodes("user_0.user_info_${0..1}");
-        orderTableRuleConfig.setKeyGeneratorColumnName("user_id");
         return orderTableRuleConfig;
     }
 
@@ -57,7 +58,6 @@ public class CustomTableRuleConfiguration {
         TableRuleConfiguration orderTableRuleConfig = new TableRuleConfiguration();
         orderTableRuleConfig.setLogicTable("student_info");
         orderTableRuleConfig.setActualDataNodes("user_0.student_info_${0..1}");
-        orderTableRuleConfig.setKeyGeneratorColumnName("student_id");
         return orderTableRuleConfig;
     }
 }
