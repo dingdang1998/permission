@@ -1,0 +1,35 @@
+server:
+  port: 9099
+
+#导出数据油站配置
+customconfig:
+  configInfoEntities:
+    - stationShortName: 精强加油站
+      ipAndPort: 10.178.174.130:3306
+      username: root
+      password: 123456
+      oilCanNos:
+    - stationShortName: 侯台加油站
+      ipAndPort: 10.178.172.98:3306
+      username: root
+      password: 123456
+      oilCanNos:
+    - stationShortName: 华苑加油站
+      ipAndPort: 10.178.172.130:3306
+      username: root
+      password: 123456
+      oilCanNos:
+    - stationShortName: 杨柳青加油站
+      ipAndPort: 10.178.175.162:3306
+      username: root
+      password: 123456
+      oilCanNos:
+#文件根路径
+rootPath: "d:/oket/取数"
+#定时任务取数周期
+time:
+  fixedDelay: 
+#日志配置
+logging:
+  config:
+    classpath: /logback-spring.xml
