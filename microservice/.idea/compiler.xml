@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="micro_city2" />
+        <module name="micro_eureka" />
+        <module name="micro_login" />
+        <module name="micro_httpclient" />
+        <module name="micro_zuul" />
+        <module name="project_webmagic" />
+        <module name="project_crawler" />
+        <module name="micro_city" />
+        <module name="project_httpclient" />
+        <module name="project_jwt" />
+        <module name="project_jsoup" />
+        <module name="micro_configserver" />
+        <module name="micro_common" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="micro_config" target="1.8" />
+      <module name="micro_people" target="1.8" />
+      <module name="micro_persion" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="micro_city" options="" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,14 @@
+#将当前项目注册到eureka中
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9991/eureka/
+  instance:
+    instance-id: city2Id
+spring:
+  application:
+    name: city2
+#开启熔断
+feign:
+  hystrix:
+    enabled: true

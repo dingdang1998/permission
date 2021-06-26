@@ -1,0 +1,16 @@
+#将当前项目注册到eureka中
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9991/eureka/
+  instance:
+    instance-id: cityId
+spring:
+  application:
+    name: city
+jwt:
+  config:
+    #盐
+    key: labi
+    #有效期
+    ttl: 1800000

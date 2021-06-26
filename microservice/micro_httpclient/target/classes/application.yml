@@ -1,0 +1,6 @@
+http:
+  maxTotal: 100
+  defaultMaxPerRoute: 20
+  connectTimeout: 3000
+  connectRequestTimeout: 2000
+  socketTimeout: 5000

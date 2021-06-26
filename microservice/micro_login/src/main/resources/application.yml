@@ -1,0 +1,8 @@
+server:
+  port: 8886
+jwt:
+  config:
+    #盐
+    key: labi
+    #有效期
+    ttl: 1800000
