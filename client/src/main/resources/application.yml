@@ -1,0 +1,22 @@
+#配置参数--参数都为必填，执行程序时请检查参数完整性
+#服务端ip
+ip: 127.0.0.1
+#服务端端口
+port: 8501
+#是否发送罐存数据：发--true 不发--false
+isSendInventory: true
+#是否发送报警数据：发--true 不发--false
+isSendAlarm: true
+#是否发送传感器数据：发--true 不发--false
+isSendSensor: true
+#是否发送卸油数据：发--true 不发--false
+isSendDelivery: true
+#数据文件根路径
+rootPath: F:/data/
+#数据发往哪个服务端：cjpt--采集平台 fcc--fcc
+serverName: cjpt
+#要模拟几个站发数据
+stationNumber: 200
+#发送数据周期 单位/秒
+cycle: 60
+
