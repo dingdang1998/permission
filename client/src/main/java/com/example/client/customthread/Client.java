@@ -10,8 +10,13 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +37,7 @@ public class Client implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
-    private static final String SUCCESS = "Success";
+    private static final String SUCCESS = "Success\r\n";
 
     private String ip;
     private Integer port;
@@ -132,6 +137,8 @@ public class Client implements Runnable {
                 try {
                     //建立连接
                     socket = new Socket(this.ip, this.port);
+                    //设置接受服务信息超时时间，如果超过3秒收不到服务端消息，主动关闭socket链接
+                    socket.setSoTimeout(3000);
                     System.out.println(this.threadNumber + "--与客户端链接成功！");
 
                     //向服务端发送消息
@@ -141,18 +148,34 @@ public class Client implements Runnable {
                         atomicInteger.set(0);
                     }
                     Message message = all.get(atomicInteger.get());
-                    out.write(message.toString().getBytes());
+                    try {
+                        out.write(message.toString().getBytes());
+                    } catch (SocketException e) {
+                        logger.error("----" + this.threadNumber + "油站---" + e.getMessage(), e);
+                    }
                     logger.info("----" + this.threadNumber + "油站向服务端发送第" + atomicInteger + "条消息成功--" + message.toString() + "--" + new Date());
 
                     //接收服务端的反馈
                     in = socket.getInputStream();
-                    reader = new BufferedReader(new InputStreamReader(in));
-                    String info = null;
-                    while ((info = reader.readLine()) != null) {
-                        logger.info("----" + this.threadNumber + "油站发送的第" + atomicInteger + "条消息接收到服务端返回响应：" + info + "--" + new Date());
-                        if (SUCCESS.equals(info)) {
-                            atomicInteger.incrementAndGet();
+                    byte[] buf = new byte[1024];
+                    int len = 0;
+                    try {
+                        while ((len = in.read(buf)) != -1) {
+                            String info = new String(buf, 0, len);
+                            if (SUCCESS.equals(info)) {
+                                logger.info("----" + this.threadNumber + "油站发送的第" + atomicInteger + "条消息接收到服务端返回响应：" + info + "--" + new Date());
+                                atomicInteger.incrementAndGet();
+                                break;
+                            }
                         }
+                    } catch (SocketTimeoutException e) {
+                        //超时主动关闭链接
+                        logger.info("-----" + this.threadNumber + "油站发送的第" + atomicInteger + "超过3秒未接收到服务端的反馈，主动关闭socket链接");
+                        out.close();
+                        in.close();
+                        socket.close();
+                    } catch (SocketException e) {
+                        logger.error("----" + this.threadNumber + "油站---" + e.getMessage(), e);
                     }
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
@@ -163,6 +186,9 @@ public class Client implements Runnable {
                         }
                         if (in != null) {
                             in.close();
+                        }
+                        if (socket != null) {
+                            socket.close();
                         }
                     } catch (IOException e) {
                         logger.error(e.getMessage(), e);
